@@ -8,10 +8,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.Autonomous;
+import frc.robot.commands.SpinCommand;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,7 +32,7 @@ public class RobotContainer {
 
   private DriveTrain swerveDrive; 
   
-  private XboxController xbC;
+  private XboxController driveController;
   
 
 
@@ -42,8 +44,8 @@ public class RobotContainer {
     frontRight = new SwerveModule (c.FRONT_RIGHT_ANGLE_ID, c.FRONT_RIGHT_SPEED_ID);
     frontLeft = new SwerveModule (c.FRONT_LEFT_ANGLE_ID, c.FRONT_LEFT_SPEED_ID);
     swerveDrive = new DriveTrain (backRight, backLeft, frontRight, frontLeft); 
-    xbC= new XboxController(Constants.XB_CONTROLLER_PORT);
-    swerveDrive.setDefaultCommand(new SwerveDrive(swerveDrive, xbC));
+    driveController= new XboxController(Constants.XB_CONTROLLER_PORT);
+    swerveDrive.setDefaultCommand(new SwerveDrive(swerveDrive, driveController));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -55,6 +57,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    new JoystickButton(driveController, XboxController.Button.kX.value).whenHeld(new SpinCommand(swerveDrive));
   }
 
   /**

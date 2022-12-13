@@ -22,7 +22,10 @@ public class DriveTrain extends SubsystemBase {
     this.frontLeft = frontLeft;
      
 }
-public void drive(double x1, double y1, double x2){
+public void drive(double xSpeed, double ySpeed, double spinSpeed){
+  double x1 = xSpeed;
+  double y1 = ySpeed;
+  double x2 = spinSpeed;
   double r = Math.sqrt ((L * L) + (W * W));
   y1 *= -1;
 
