@@ -6,14 +6,17 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.Autonomous;
-import frc.robot.commands.SpinCommand;
+import frc.robot.commands.MoveArm;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.commands.ZeroWheels;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,21 +34,32 @@ public class RobotContainer {
   private SwerveModule frontLeft;      
 
   private DriveTrain swerveDrive; 
+
+  private Arm arm;
   
-  private XboxController driveController;
+  private XboxController xbC;
+  private Joystick pad;
   
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     c = new Constants();
-    backRight = new SwerveModule (c.BACK_RIGHT_ANGLE_ID, c.BACK_RIGHT_SPEED_ID);
-    backLeft = new SwerveModule (c.BACK_LEFT_ANGLE_ID, c.BACK_LEFT_SPEED_ID);
-    frontRight = new SwerveModule (c.FRONT_RIGHT_ANGLE_ID, c.FRONT_RIGHT_SPEED_ID);
-    frontLeft = new SwerveModule (c.FRONT_LEFT_ANGLE_ID, c.FRONT_LEFT_SPEED_ID);
+    xbC= new XboxController(Constants.XB_CONTROLLER_PORT);
+    pad = new Joystick(Constants.PAD_PORT);
+
+    backRight = new SwerveModule(c.BACK_RIGHT_ANGLE_ID, c.BACK_RIGHT_SPEED_ID, "br");
+    backLeft = new SwerveModule(c.BACK_LEFT_ANGLE_ID, c.BACK_LEFT_SPEED_ID, "bl");
+    frontRight = new SwerveModule(c.FRONT_RIGHT_ANGLE_ID, c.FRONT_RIGHT_SPEED_ID, "fr");
+    frontLeft = new SwerveModule(c.FRONT_LEFT_ANGLE_ID, c.FRONT_LEFT_SPEED_ID, "fl");
+
     swerveDrive = new DriveTrain (backRight, backLeft, frontRight, frontLeft); 
-    driveController= new XboxController(Constants.XB_CONTROLLER_PORT);
-    swerveDrive.setDefaultCommand(new SwerveDrive(swerveDrive, driveController));
+    //swerveDrive.setDefaultCommand(new SwerveDrive(swerveDrive, xbC));
+
+    arm=new Arm();
+    arm.setDefaultCommand(new MoveArm(arm,xbC,pad));
+
+    SmartDashboard.putData("Zero Wheels", new ZeroWheels(swerveDrive));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -57,7 +71,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(driveController, XboxController.Button.kX.value).whenHeld(new SpinCommand(swerveDrive));
   }
 
   /**
