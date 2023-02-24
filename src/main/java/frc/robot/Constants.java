@@ -16,6 +16,9 @@ public final class Constants {
     public final static double SWERVE_MAX_VOLTS = 4.95;
     public final static double ROBOT_LENGTH = 20.375;
     public final static double ROBOT_WIDTH = 20.375;
+    
+    public final static double ARM_JOINT_1_LENGTH = 3.5;
+    public final static double ARM_JOINT_2_LENGTH = 3.5;
 
     public static final int BACK_LEFT_ANGLE_ID = 4;
     public static final int BACK_LEFT_SPEED_ID = 3;
