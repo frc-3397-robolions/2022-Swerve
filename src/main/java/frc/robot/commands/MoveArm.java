@@ -18,6 +18,10 @@ public class MoveArm extends CommandBase {
   private Joystick pad;
   private double bottomAngle;
   private double topAngle;
+  private double x=0;
+  private double y=0;
+  private double a2=Constants.ARM_JOINT_2_LENGTH;
+  private double a1=Constants.ARM_JOINT_1_LENGTH;
   public MoveArm(Arm sub, XboxController xbC,Joystick pad) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(sub);
@@ -33,23 +37,15 @@ public class MoveArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (xbC.getLeftBumper()){
-      bottomAngle+=0.3;
-    }
-    else if (xbC.getRightBumper()){
-      bottomAngle-=0.3;
-    }
-    //Folded Position
-    if(pad.getRawButton(0)){
-      bottomAngle=0;
-      topAngle=0;
-    }
-
-    arm.setBottomAngle(bottomAngle);
-    arm.setTopAngle(topAngle);
-
+    y=clamp(y, -4.2,0);
+    topAngle=Math.acos(x*x+y*y-a1*a1-a2*a2/(2*a1*a2));
+    bottomAngle=Math.atan(x/y)+Math.atan(a2*Math.sin(topAngle)/(a1+a2*Math.cos(topAngle)));
+    topAngle=clamp(topAngle,-180,180);
+    bottomAngle=clamp(bottomAngle,0,300)
     SmartDashboard.putNumber("bottomAngle", bottomAngle);
     SmartDashboard.putNumber("topAngle", topAngle);
+    arm.setBottomAngle(bottomAngle);
+    arm.setTopAngle(topAngle);
 
     if(xbC.getBackButton()){
       arm.zeroBottomEncoder();
